@@ -1,6 +1,6 @@
 # fiap-tech-challenge-kubernetes-infrastructure
 
-Infraestrutura de rede e cluster Kubernetes (Amazon EKS) do Tech Challenge Fase 3 — FIAP Pós-Tech, Arquitetura de Software, turma 13SOAT. Repositório 2 dos 4 exigidos pela Fase 3: provisiona, via Terraform, toda a infraestrutura de nuvem necessária para rodar a [aplicação principal](https://github.com/Adriana-Meyer/fiap-tech-challenge-pos-tech) em Kubernetes na AWS — exceto o banco de dados, que fica no [Repositório 3](https://github.com/Adriana-Meyer/fiap-tech-challenge-database-infrastructure), e a Lambda/API Gateway, que ficam no [Repositório 1](https://github.com/Adriana-Meyer/fiap-tech-challenge-API-gateway-function-serverless).
+Infraestrutura de rede e cluster Kubernetes (Amazon EKS) do Tech Challenge Fase 3 — FIAP Pós-Tech, Arquitetura de Software, turma 15SOAT. Repositório 2 dos 4 exigidos pela Fase 3: provisiona, via Terraform, toda a infraestrutura de nuvem necessária para rodar a [aplicação principal](https://github.com/Adriana-Meyer/fiap-tech-challenge-pos-tech) em Kubernetes na AWS — exceto o banco de dados, que fica no [Repositório 3](https://github.com/Adriana-Meyer/fiap-tech-challenge-database-infrastructure), e a Lambda/API Gateway, que ficam no [Repositório 1](https://github.com/Adriana-Meyer/fiap-tech-challenge-API-gateway-function-serverless).
 
 ## Tecnologias
 
