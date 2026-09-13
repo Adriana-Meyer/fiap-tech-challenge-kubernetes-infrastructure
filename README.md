@@ -61,7 +61,7 @@ flowchart TB
 
 **Decisões de desenho** (detalhadas nos ADRs/RFCs centralizados no repositório da App, pasta [`docs/`](https://github.com/Adriana-Meyer/fiap-tech-challenge-pos-tech/tree/main/docs)):
 - Cluster e Node Group usam o role `LabEksClusterRole` já existente na conta AWS Academy — o Learner Lab não permite criar roles/políticas IAM novos.
-- 1 único NAT Gateway (não um por AZ) para reduzir custo — aceitável para um projeto acadêmico.
+- 1 único NAT Gateway (não um por AZ) para reduzir custo, visto que trata-se de um projeto acadêmico e com orçamento limitado na AWS.
 - Node Group limitado a no máximo 2 instâncias `t3.medium`: o Learner Lab tem um teto de 9 instâncias EC2 simultâneas e 32 vCPUs na conta inteira (20+ instâncias derruba a conta), então o node group precisa deixar folga para outros usos eventuais de EC2.
 - VPC e subnets recebem tags fixas (`Name`, `Tier=public/private`) e o cluster tem um nome fixo (`tech-challenge-eks`) para o Repositório 3 conseguir localizar a rede e o security group do cluster via `data source` do Terraform, sem precisar copiar valores manualmente entre repositórios.
 - A integração do New Relic com o Kubernetes (`nri-bundle`) fica neste repositório por ser infraestrutura de cluster, não da aplicação — o `helm_release` só é criado quando a variável `new_relic_license_key` é definida (evita quebrar o `apply` antes da etapa de observabilidade).
