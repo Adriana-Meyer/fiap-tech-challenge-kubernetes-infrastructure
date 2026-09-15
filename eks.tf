@@ -1,13 +1,25 @@
-# AWS Academy Learner Lab only allows LabEksClusterRole (pre-created, no
-# custom IAM roles/policies can be created) — used for both the cluster
-# and the node group, as documented by the Lab.
-data "aws_iam_role" "eks_cluster_role" {
-  name = "LabEksClusterRole"
+# AWS Academy Learner Lab only allows pre-created IAM roles (no custom
+# roles/policies) — but the actual names aren't the clean "LabEksClusterRole"/
+# "LabEksNodeRole" the generic Lab docs describe. Each lab instance gets a
+# unique prefix/suffix (e.g. "c221562a...-LabEksClusterRole-x7tTWFEXrXCi"),
+# and the cluster and node group use two DIFFERENT roles, not one shared
+# role — so an exact-name lookup fails. Match by substring instead.
+data "aws_iam_roles" "eks_cluster_role" {
+  name_regex = ".*LabEksClusterRole.*"
+}
+
+data "aws_iam_roles" "eks_node_role" {
+  name_regex = ".*LabEksNodeRole.*"
+}
+
+locals {
+  eks_cluster_role_arn = tolist(data.aws_iam_roles.eks_cluster_role.arns)[0]
+  eks_node_role_arn    = tolist(data.aws_iam_roles.eks_node_role.arns)[0]
 }
 
 resource "aws_eks_cluster" "main" {
   name     = var.cluster_name
-  role_arn = data.aws_iam_role.eks_cluster_role.arn
+  role_arn = local.eks_cluster_role_arn
   version  = var.kubernetes_version
 
   vpc_config {
@@ -29,7 +41,7 @@ resource "aws_eks_cluster" "main" {
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project_name}-node-group"
-  node_role_arn   = data.aws_iam_role.eks_cluster_role.arn
+  node_role_arn   = local.eks_node_role_arn
   subnet_ids      = aws_subnet.private[*].id
   instance_types  = [var.node_instance_type]
 
