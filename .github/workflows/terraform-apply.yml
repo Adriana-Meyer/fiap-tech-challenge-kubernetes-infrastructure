@@ -1,4 +1,4 @@
-name: Terraform Apply — EKS Infrastructure
+name: Terraform — EKS Infrastructure
 
 # Manual trigger while the infra is still under development, to avoid
 # burning AWS Academy budget/session time on every merge. Automatic
