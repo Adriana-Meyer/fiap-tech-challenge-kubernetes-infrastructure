@@ -20,7 +20,9 @@ locals {
 resource "aws_eks_cluster" "main" {
   name     = var.cluster_name
   role_arn = local.eks_cluster_role_arn
-  version  = var.kubernetes_version
+  # null (not an empty string) is what actually omits the argument, so EKS
+  # picks its current default version instead of rejecting a deprecated one.
+  version = var.kubernetes_version != "" ? var.kubernetes_version : null
 
   vpc_config {
     subnet_ids              = concat(aws_subnet.public[*].id, aws_subnet.private[*].id)

@@ -38,8 +38,9 @@ variable "cluster_name" {
 }
 
 variable "kubernetes_version" {
-  type    = string
-  default = "1.29"
+  description = "Left empty on purpose: EKS deprecates old versions over time (1.29 stopped being creatable), so pinning one here would need updating periodically. An empty string lets AWS use its current default version automatically."
+  type        = string
+  default     = ""
 }
 
 variable "node_instance_type" {
