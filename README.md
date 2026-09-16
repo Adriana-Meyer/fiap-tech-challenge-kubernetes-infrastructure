@@ -11,6 +11,7 @@ Infraestrutura de rede e cluster Kubernetes (Amazon EKS) do Tech Challenge Fase 
 | Rede | VPC própria, subnets públicas/privadas em 2 AZs, 1 NAT Gateway |
 | Cluster | Amazon EKS (Managed Node Group) |
 | Observabilidade de cluster | New Relic Kubernetes integration (`nri-bundle`, via Helm) |
+| Métricas para o HPA | `metrics-server` (EKS-managed add-on) |
 | CI/CD | GitHub Actions |
 
 ## Arquitetura
@@ -43,6 +44,7 @@ flowchart TB
             direction TB
             NodeGroup["Managed Node Group<br/>1-2 nós t3.medium<br/>role: LabEksClusterRole"]:::eks
             NewRelicDaemon["New Relic nri-bundle<br/>(Helm release)"]:::eks
+            MetricsServer["metrics-server<br/>(EKS add-on)"]:::eks
         end
     end
 
@@ -57,6 +59,7 @@ flowchart TB
     NodeGroup -. "JDBC :3306" .-> RDS_Repo3
     APIGW_Repo1 -- "HTTP proxy" --> App_Repo4
     NewRelicDaemon -. "métricas de cluster" .-> NodeGroup
+    MetricsServer -. "CPU/memória p/ HPA" .-> App_Repo4
 ```
 
 **Decisões de desenho** (detalhadas nos ADRs/RFCs centralizados no repositório da App, pasta [`docs/`](https://github.com/Adriana-Meyer/fiap-tech-challenge-pos-tech/tree/main/docs)):
@@ -65,6 +68,7 @@ flowchart TB
 - Node Group limitado a no máximo 2 instâncias `t3.medium`: o Learner Lab tem um teto de 9 instâncias EC2 simultâneas e 32 vCPUs na conta inteira (20+ instâncias derruba a conta), então o node group precisa deixar folga para outros usos eventuais de EC2.
 - VPC e subnets recebem tags fixas (`Name`, `Tier=public/private`) e o cluster tem um nome fixo (`tech-challenge-eks`) para o Repositório 3 conseguir localizar a rede e o security group do cluster via `data source` do Terraform, sem precisar copiar valores manualmente entre repositórios.
 - A integração do New Relic com o Kubernetes (`nri-bundle`) fica neste repositório por ser infraestrutura de cluster, não da aplicação — o `helm_release` só é criado quando a variável `new_relic_license_key` é definida (evita quebrar o `apply` antes da etapa de observabilidade).
+- `metrics-server` instalado como add-on gerenciado do EKS (`aws_eks_addon`), não Helm — a AWS já oferece nativamente, sem exigir role IAM própria (diferente do New Relic, que precisa de um chart de terceiros). Sem ele, o `HorizontalPodAutoscaler` do Repositório 4 fica sem métrica de CPU/memória pra decidir quando escalar.
 
 ## Pré-requisitos
 
